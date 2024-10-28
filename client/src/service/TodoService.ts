@@ -1,12 +1,12 @@
-import axios from 'axios';
+import axios from '../axios.js';
 import Todo, { PriorityType } from '../models/ToDo';
 
 const API_URL = 'http://localhost:3000/todos';
 
 class TodoService {
-    async fetchTodos(name?: string): Promise<Todo[]> {
+    async fetchTodos(name?: string, priority?: string[]): Promise<Todo[]> {
         try {
-          const response = await axios.get(API_URL, { params: { name } });
+          const response = await axios.get(API_URL, { params: { name, priority } });
           return response.data;
         } catch (error) {
           console.error('Error fetching todos:', error);

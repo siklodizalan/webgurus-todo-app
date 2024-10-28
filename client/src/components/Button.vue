@@ -1,8 +1,8 @@
 <template>
     <button
       :class="buttonClasses"
-      @click="handleClick"
       :disabled="disabled"
+      @click="handleClick"
     >
       <slot></slot>
     </button>
@@ -42,9 +42,8 @@
     }
   });
 
-  const disabledClass = props.disabled ? 'opacity-50 cursor-not-allowed' : '';
-
   const buttonClasses = computed(() => {
+    const disabledClass = props.disabled ? 'opacity-50 cursor-not-allowed' : '';
     return cn(
       baseClasses,
       `${variantClasses.value} ${disabledClass} ${props.buttonStyle}`.trim()

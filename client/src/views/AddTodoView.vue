@@ -1,10 +1,11 @@
 <template>
+     <h1 class="text-2xl font-bold mb-4">Add New To-Do</h1>
     <Button 
         type="button"
         :disabled="false" 
         variant="text"
         buttonStyle="mb-4"
-        @click="handleBackToSearchButtonClick" 
+        @click="navigateToHomePage" 
         >
         Back to Search 
     </Button>
@@ -25,7 +26,7 @@
         </select>
         <Button 
             type="button"
-            :disabled="false"
+            :disabled="isAddButtonDisabled"
             variant="primary"
             @click="addTodo" 
             >
@@ -35,35 +36,37 @@
 </template>
 
 <script setup lang="ts">
-    import { ref } from 'vue';
+    import { computed, ref } from 'vue';
     import Button from '../components/Button.vue';
     import Input from '../components//Input.vue';
     import TodoService from '../service/TodoService';
     import Todo, { PriorityType } from '../models/ToDo';
+    import { useRouter } from 'vue-router';
 
     const todos = ref<Todo[]>([]);
     const newTodo = ref<string>('');
     const selectedPriority = ref<PriorityType>(null);
 
+    const isAddButtonDisabled = computed(() => {
+        return !newTodo.value.trim() || !selectedPriority.value;
+    });
+
     const addTodo = async () => {
         if (newTodo.value.trim()) {
             try {
-            const addedTodo = await TodoService.addTodo(newTodo.value.trim(), selectedPriority.value);
-            todos.value.push(addedTodo);
-            newTodo.value = '';
-            handleBackToSearchButtonClick();
+                const addedTodo = await TodoService.addTodo(newTodo.value.trim(), selectedPriority.value);
+                todos.value.push(addedTodo);
+                newTodo.value = '';
+                navigateToHomePage();
             } catch (error) {
-            console.error('Error adding todo:', error);
+                console.error('Error adding todo:', error);
             }
         }
     };
 
-    interface ButtonClickEmits {
-        (event: 'click'): void;
-    }
-    const emit = defineEmits<ButtonClickEmits>();
+    const router = useRouter();
 
-    const handleBackToSearchButtonClick = (): void => {
-        emit('click');
-    };
+    function navigateToHomePage() {
+        router.push('/');
+    }
 </script>

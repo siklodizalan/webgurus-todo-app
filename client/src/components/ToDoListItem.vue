@@ -33,7 +33,7 @@
   import { ref, watch } from 'vue';
   import Button from './Button.vue';
   import Checkbox from './Checkbox.vue';
-import { PriorityType } from '../models/ToDo';
+  import { PriorityType } from '../models/ToDo';
 
   interface Props {
     text: string;

@@ -4,6 +4,8 @@
         :class="checkboxClasses"
         type="checkbox"
         v-model="isChecked"
+        :value="value"
+        :id="id"
       />
       <label v-if="label" :class="labelClasses">
         {{ label }}
@@ -16,10 +18,11 @@
     import { cn } from "../utils/ClassNameUtil.ts"; 
   
     interface CheckboxProps {
-        modelValue: boolean;
         label?: string;
         checkboxStyle?: string;
         labelStyle?: string;
+        value?: string;
+        id?: string;
     }
 
     const props = defineProps<CheckboxProps>();
@@ -31,7 +34,7 @@
     });
 
     const labelClasses = computed(() => {
-        return cn('ml-2 text-sm font-medium text-gray-700', props.labelStyle);
+        return cn('ml-2 text-lg font-medium text-white', props.labelStyle);
     });
 </script>
   

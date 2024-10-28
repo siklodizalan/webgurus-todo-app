@@ -21,6 +21,4 @@ async function connectToDatabase() {
   }
 }
 
-const db = await connectToDatabase();
-
-export { connectToDatabase, db };
+export { connectToDatabase };
