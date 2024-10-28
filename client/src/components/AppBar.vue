@@ -7,40 +7,36 @@
           <img
             src="/vite.svg"
             alt="Vite logo"
-            class="h-12 p-2 transition-filter duration-300 group-hover:drop-shadow-[0_0_2em_#646cffaa]"
-          />
+            class="h-12 p-2 transition-filter duration-300 group-hover:drop-shadow-[0_0_2em_#646cffaa]" />
         </a>
         <a href="https://vuejs.org/" target="_blank" class="group">
           <img
             src="../assets/vue.svg"
             alt="Vue logo"
-            class="h-12 p-2 transition-filter duration-300 group-hover:drop-shadow-[0_0_2em_#42b883aa]"
-          />
+            class="h-12 p-2 transition-filter duration-300 group-hover:drop-shadow-[0_0_2em_#42b883aa]" />
         </a>
       </div>
       <!-- Middle -->
-       <div class="mt-4"> 
+      <div class="mt-4">
         <h1 class="text-2xl font-bold mb-4">To-Do List App</h1>
       </div>
 
       <!-- Right Side -->
       <div>
-        <ProfileComponent 
+        <ProfileComponent
           v-if="user.name"
           :username="user.name"
-          :profileImageUrl="user.profileImageUrl || placeholderImage" 
-        />
+          :profileImageUrl="user.profileImageUrl || placeholderImage" />
       </div>
     </div>
   </nav>
 </template>
 
 <script setup lang="ts">
-  import ProfileComponent from './ProfileComponent.vue';
-  import { useUser } from '../composables/useUser';
+import ProfileComponent from "./ProfileComponent.vue";
+import { useUser } from "../composables/useUser";
 
-  const placeholderImage = 'https://via.placeholder.com/150';
+const placeholderImage = "https://via.placeholder.com/150";
 
-  const { user } = useUser();
+const { user } = useUser();
 </script>
-

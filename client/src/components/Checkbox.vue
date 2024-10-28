@@ -1,40 +1,41 @@
 <template>
-    <div class="flex items-center">
-      <input
-        :class="checkboxClasses"
-        type="checkbox"
-        v-model="isChecked"
-        :value="value"
-        :id="id"
-      />
-      <label v-if="label" :class="labelClasses">
-        {{ label }}
-      </label>
-    </div>
+  <div class="flex items-center">
+    <input
+      :class="checkboxClasses"
+      type="checkbox"
+      v-model="isChecked"
+      :value="value"
+      :id="id" />
+    <label v-if="label" :class="labelClasses">
+      {{ label }}
+    </label>
+  </div>
 </template>
-  
+
 <script setup lang="ts">
-    import { computed } from "vue";
-    import { cn } from "../utils/ClassNameUtil.ts"; 
-  
-    interface CheckboxProps {
-        label?: string;
-        checkboxStyle?: string;
-        labelStyle?: string;
-        value?: string;
-        id?: string;
-    }
+import { computed } from "vue";
+import { cn } from "../utils/ClassNameUtil.ts";
 
-    const props = defineProps<CheckboxProps>();
+interface CheckboxProps {
+  label?: string;
+  checkboxStyle?: string;
+  labelStyle?: string;
+  value?: string;
+  id?: string;
+}
 
-    const isChecked = defineModel(); 
-  
-    const checkboxClasses = computed(() => {
-        return cn('form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out', props.checkboxStyle);
-    });
+const props = defineProps<CheckboxProps>();
 
-    const labelClasses = computed(() => {
-        return cn('ml-2 text-lg font-medium text-white', props.labelStyle);
-    });
+const isChecked = defineModel();
+
+const checkboxClasses = computed(() => {
+  return cn(
+    "form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out",
+    props.checkboxStyle
+  );
+});
+
+const labelClasses = computed(() => {
+  return cn("ml-2 text-lg font-medium text-white", props.labelStyle);
+});
 </script>
-  

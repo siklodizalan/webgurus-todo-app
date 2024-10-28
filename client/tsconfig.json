@@ -16,9 +16,13 @@
 
     "strict": true,
 
-    "baseUrl": ".",
-    
+    "baseUrl": "."
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/service/createAxiosClient.js"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/service/createAxiosClient.js"
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
