@@ -20,7 +20,7 @@ router.get("/", async (req, res, next) => {
       res.status(500).json({ message: ERROR_MESSAGES.typeOfNameQuery });
       return;
     }
-    const todos = await getTodos(name, priority as string[]);
+    const todos = await getTodos(name, priority as string[], res.locals.userId);
     res.status(200).json(todos);
   } catch (err) {
     next(err);
@@ -33,6 +33,7 @@ router.post("/", async (req, res, next) => {
       req.body.name,
       req.body.priority,
       req.body.completed,
+      res.locals.userId
     );
     res.status(201).json(insertedTodo);
   } catch (err) {
@@ -46,6 +47,7 @@ router.put("/:id", async (req, res, next) => {
     const updateSuccessful = await setTodoCompleted(
       req.params.id,
       req.body.completed,
+      res.locals.userId,
     );
 
     if (!updateSuccessful) {
@@ -60,7 +62,7 @@ router.put("/:id", async (req, res, next) => {
 
 router.delete("/:id", async (req, res, next) => {
   try {
-    const deleteSuccessful = await deleteTodo(req.params.id);
+    const deleteSuccessful = await deleteTodo(req.params.id, res.locals.userId);
     if (deleteSuccessful) {
       res.status(200).json({ message: "Todo deleted successfully" });
     } else {

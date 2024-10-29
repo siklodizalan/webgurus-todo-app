@@ -18,18 +18,18 @@ export const verifyTokenMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const authHeader = req.headers["authorization"];
-    if (!authHeader) {
-      return next(
+    try {
+        const authHeader = req.headers["authorization"];
+        if (!authHeader) {
+        return next(
+            res.status(401).json({ message: "Failed to authenticate token" }),
+        );
+        }
+        res.locals.userId = verifyToken(authHeader);
+        return next();
+    } catch (err) {
+        return next(
         res.status(401).json({ message: "Failed to authenticate token" }),
-      );
+        );
     }
-    res.locals.userId = verifyToken(authHeader);
-    return next();
-  } catch (err) {
-    return next(
-      res.status(401).json({ message: "Failed to authenticate token" }),
-    );
-  }
 };

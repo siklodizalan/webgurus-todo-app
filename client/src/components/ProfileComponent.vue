@@ -16,16 +16,23 @@
       <BaseButton
         type="button"
         variant="text"
-        buttonStyle="w-full text-left text-sm text-red-600"
+        buttonStyle="w-full text-left text-sm"
+        @click="getToUploadProfilePicture">
+        Upload Profile Picture
+      </BaseButton>
+      <BaseButton
+        type="button"
+        variant="text"
+        buttonStyle="w-full text-left text-sm text-gray-700"
         @click="logoutUser">
         Logout
       </BaseButton>
       <BaseButton
         type="button"
         variant="text"
-        buttonStyle="w-full text-left text-sm text-gray-700"
-        @click="getToUploadProfilePicture">
-        Upload Profile Picture
+        buttonStyle="w-full text-left text-sm text-red-600"
+        @click="deleteUser">
+        Delete My Account
       </BaseButton>
     </div>
   </div>
@@ -39,7 +46,7 @@ import { useUser } from "../composables/useUser";
 
 const isDropdownOpen = ref(false);
 const router = useRouter();
-const { logoutUser } = useUser();
+const { logoutUser, deleteUser } = useUser();
 
 interface Props {
   username: string;

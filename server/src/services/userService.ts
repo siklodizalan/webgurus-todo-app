@@ -5,6 +5,8 @@ import { Db, ObjectId } from "mongodb";
 import { validateUser } from "../../../shared/utils/validationUtil.js";
 import { LoginResponse, User } from "../database/models/User.js";
 import { PORT } from "../index.js";
+import path from "path";
+import fs from "fs/promises";
 
 export async function uniqueUser(username: string, email: string) {
   const db: Db = await connectToDatabase();
@@ -122,4 +124,29 @@ export async function register(
     token,
   };
   return registerResponse;
+}
+
+export async function deleteUser(userId: string) {
+  const db: Db = await connectToDatabase();
+  const userCollection = db.collection("users");
+  const todosCollection = db.collection("todos");
+
+  const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+  if (user?.profileImageUrl) {
+    const imagePath = path.join(process.cwd(), user.profileImageUrl);
+    try {
+      await fs.unlink(imagePath);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  await todosCollection.deleteMany({ userId: userId });
+
+  const result = await userCollection.deleteOne({
+    _id: new ObjectId(userId),
+  });
+
+  return result.deletedCount === 1;
 }

@@ -1,13 +1,12 @@
 import express from "express";
 import { Request, Response, NextFunction } from "express";
-import { Db, ObjectId } from "mongodb";
 import {
+  deleteUser,
   login,
   profile,
   register,
   saveProfileImageToUser,
 } from "../services/userService";
-import { connectToDatabase } from "../database/connection";
 import { verifyToken } from "../middlewares/authMiddleware";
 import multer from "multer";
 import path from "path";
@@ -99,16 +98,22 @@ router.post(
 
 router.use("/uploads", express.static(UPLOAD_DIR));
 
-router.delete("/users/:id", async (req, res, next) => {
+router.delete("/user", async (req, res, next) => {
   try {
-    const db: Db = await connectToDatabase();
-    const userCollection = db.collection("users");
-    const userId = req.params.id;
+    const authHeader = req.headers["authorization"];
+    if (!authHeader) {
+      res.status(500).json({ message: ERROR_MESSAGES.unexpected });
+      return;
+    }
 
-    const result = await userCollection.deleteOne({
-      _id: new ObjectId(userId),
-    });
-    if (result.deletedCount === 1) {
+    const userId = verifyToken(authHeader);
+    if (!userId) {
+      res.status(500).json({ message: ERROR_MESSAGES.unexpected });
+      return;
+    }
+    
+    const deleteSuccessful = await deleteUser(userId);
+    if (deleteSuccessful) {
       res.status(200).json({ message: "User deleted successfully" });
     } else {
       res.status(404).json({ message: ERROR_MESSAGES.userNotFound });

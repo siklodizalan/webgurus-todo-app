@@ -1,11 +1,12 @@
-import { client } from "../axiosClient.js";
+import { client } from "../client.js";
 import type Todo from "../models/ToDo";
 import type { PriorityType } from "../models/ToDo";
+import TodoData from "../models/ToDo";
 
 const todoService = {
   async fetchTodos(name?: string, priority?: string[]): Promise<Todo[]> {
     try {
-      const response = await client.get('/todos', { params: { name, priority } });
+      const response = await client.get<TodoData[]>('/todos', { params: { name, priority } });
       return response.data;
     } catch (error) {
       console.error("Error fetching todos:", error);
@@ -15,7 +16,7 @@ const todoService = {
 
   async addTodo(name: string, priority: PriorityType): Promise<Todo> {
     try {
-      const response = await client.post('/todos', {
+      const response = await client.post<Omit<TodoData, "_id">, TodoData>('/todos', {
         name,
         priority,
         completed: false,
@@ -29,7 +30,7 @@ const todoService = {
 
   async updateTodo(id: string, completed: boolean): Promise<void> {
     try {
-      const response = await client.put(`/todos/${id}`, { completed });
+      const response = await client.put<Pick<TodoData, "completed">, void>(`/todos/${id}`, { completed });
       return response.data;
     } catch (error) {
       console.error("Error updating todo:", error);

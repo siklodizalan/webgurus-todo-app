@@ -10,6 +10,7 @@ const user = ref({
 
 export function useUser() {
   const router = useRouter();
+
   function logoutUser() {
     user.value.name = null;
     user.value.profileImageUrl = null;
@@ -34,10 +35,16 @@ export function useUser() {
     user.value.profileImageUrl = userData.profileImageUrl;
   }
 
+  async function deleteUser() {
+    await UserService.deleteUser();
+    logoutUser();
+  }
+
   return {
     user,
     logoutUser,
     updateUser,
     initializeUser,
+    deleteUser,
   };
 }

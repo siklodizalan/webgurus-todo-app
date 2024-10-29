@@ -13,6 +13,10 @@ const todoSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  userId: {
+    type: String,
+    default: false,
+  }
 });
 
 module.exports = mongoose.model("Todo", todoSchema);
