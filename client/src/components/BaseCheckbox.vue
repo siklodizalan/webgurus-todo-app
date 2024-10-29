@@ -18,7 +18,7 @@
 import { computed } from "vue";
 import { cn } from "../utils/ClassNameUtil.ts";
 
-interface CheckboxProps {
+interface Props {
   label?: string;
   checkboxStyle?: string;
   labelStyle?: string;
@@ -26,7 +26,7 @@ interface CheckboxProps {
   id?: string;
 }
 
-const props = defineProps<CheckboxProps>();
+const props = defineProps<Props>();
 
 const isChecked = defineModel();
 

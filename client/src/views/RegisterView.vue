@@ -145,11 +145,6 @@ async function submitForm() {
   }
 }
 
-function validateEmail(email: string): boolean {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
-}
-
 function navigateToLogin() {
   router.push("/login");
 }

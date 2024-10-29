@@ -38,6 +38,7 @@ import BaseButton from "../components/BaseButton.vue";
 import { useUser } from "../composables/useUser";
 
 const { updateUser } = useUser();
+const router = useRouter();
 
 const selectedFile = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
@@ -61,8 +62,6 @@ async function uploadImage() {
   updateUser(undefined, newProfileImageUrl);
   navigateToHomePage();
 }
-
-const router = useRouter();
 
 function navigateToHomePage() {
   router.push("/");

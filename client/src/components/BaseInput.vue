@@ -13,8 +13,7 @@
       class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer"
       aria-label="Toggle password visibility"
       @click="togglePasswordVisibility">
-      <span v-if="isPasswordVisible">👁️</span>
-      <span v-else>👁️‍🗨️</span>
+      <span> {{ isPasswordVisible ? '👁️' : '👁️‍🗨️'}}</span>
     </BaseButton>
   </div>
 </template>
@@ -24,7 +23,7 @@ import { computed, ref } from "vue";
 import { cn } from "../utils/ClassNameUtil.ts";
 import BaseButton from "./BaseButton.vue";
 
-interface InputProps {
+interface Props {
   modelValue: string | number | boolean;
   label?: string;
   placeholder?: string;
@@ -33,13 +32,13 @@ interface InputProps {
   labelStyle?: string;
 }
 
-interface InputEmits {
+interface Emits {
     (e: "enter"): void;
 }
 
-const props = defineProps<InputProps>();
+const props = defineProps<Props>();
 
-defineEmits<InputEmits>();
+defineEmits<Emits>();
 
 const model = defineModel();
 

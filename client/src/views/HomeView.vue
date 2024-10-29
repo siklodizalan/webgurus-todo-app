@@ -76,15 +76,8 @@ async function searchTodos() {
 };
 
 async function priorityFilter(checkedPriorities: string[]) {
-  try {
-    localPriorities.value = checkedPriorities;
-    todos.value = await TodoService.fetchTodos(
-      searchTerm.value.trim(),
-      checkedPriorities
-    );
-  } catch (error) {
-    console.error("Error fetching todos:", error);
-  }
+  localPriorities.value = checkedPriorities;
+  searchTodos();
 };
 
 async function updateTodoStatus(id: string, completed: boolean) {
@@ -104,6 +97,10 @@ async function removeTodo(id: string) {
   }
 };
 
+function navigateToAddTodoPage() {
+  router.push("/add");
+}
+
 watch(searchTerm, () => {
   searchTodos();
 });
@@ -111,8 +108,4 @@ watch(searchTerm, () => {
 onMounted(() => {
   fetchTodos();
 });
-
-function navigateToAddTodoPage() {
-  router.push("/add");
-}
 </script>

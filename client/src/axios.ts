@@ -24,13 +24,12 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
-      if (error.response.status === 401) {
-        Cookies.remove("token");
-        router.push("/login");
-      }
+    if (error.response?.status === 401) {
+      Cookies.remove("token");
+      router.push("/login");
+    } else {
+      throw error;
     }
-    throw error;
   }
 );
 

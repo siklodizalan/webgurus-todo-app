@@ -16,14 +16,14 @@
       <BaseButton
         type="button"
         variant="text"
-        BaseButtonStyle="w-full text-left text-sm text-red-600"
+        buttonStyle="w-full text-left text-sm text-red-600"
         @click="logoutUser">
         Logout
       </BaseButton>
       <BaseButton
         type="button"
         variant="text"
-        BaseButtonStyle="w-full text-left text-sm text-gray-700"
+        buttonStyle="w-full text-left text-sm text-gray-700"
         @click="getToUploadProfilePicture">
         Upload Profile Picture
       </BaseButton>
@@ -37,16 +37,16 @@ import { useRouter } from "vue-router";
 import BaseButton from "./BaseButton.vue";
 import { useUser } from "../composables/useUser";
 
-interface ProfileComponentProps {
+const isDropdownOpen = ref(false);
+const router = useRouter();
+const { logoutUser } = useUser();
+
+interface Props {
   username: string;
   profileImageUrl: string;
 }
 
-defineProps<ProfileComponentProps>();
-
-const isDropdownOpen = ref(false);
-const router = useRouter();
-const { logoutUser } = useUser();
+defineProps<Props>();
 
 function toggleDropdown() {
   isDropdownOpen.value = !isDropdownOpen.value;

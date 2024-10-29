@@ -28,20 +28,6 @@ import BaseButton from "./BaseButton.vue";
 import BaseCheckbox from "./BaseCheckbox.vue";
 import type { PriorityType } from "../models/ToDo";
 
-interface Props {
-  text: string;
-  completed: boolean;
-  priority: PriorityType;
-  id: string;
-}
-const props = defineProps<Props>();
-
-interface ListItemEmits {
-  (event: "onDelete"): void;
-  (event: "onUpdate", value: boolean): void;
-}
-const emit = defineEmits<ListItemEmits>();
-
 const classMap = {
   High: "bg-red-500",
   Medium: "bg-yellow-500",
@@ -50,7 +36,21 @@ const classMap = {
 
 const priorityClass = computed(() => classMap[props.priority!] || "");
 
+interface Props {
+  text: string;
+  completed: boolean;
+  priority: PriorityType;
+  id: string;
+}
+const props = defineProps<Props>();
+
 const isChecked = ref(props.completed);
+
+interface Emits {
+  (event: "onDelete"): void;
+  (event: "onUpdate", value: boolean): void;
+}
+const emit = defineEmits<Emits>();
 
 watch(
   () => props.completed,
@@ -59,11 +59,11 @@ watch(
   }
 );
 
-const handleDelete = (): void => {
+function handleDelete(): void {
   emit("onDelete");
 };
 
-const handleUpdate = (): void => {
+function handleUpdate(): void {
   emit("onUpdate", isChecked.value);
 };
 </script>

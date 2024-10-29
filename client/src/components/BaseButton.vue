@@ -11,20 +11,20 @@
 import { computed } from "vue";
 import { cn } from "../utils/ClassNameUtil";
 
-interface ButtonProps {
+interface Props {
   type: "button" | "submit" | "reset";
   variant: "primary" | "secondary" | "text";
   disabled?: boolean;
   buttonStyle?: string;
 }
 
-const props = defineProps<ButtonProps>();
+const props = defineProps<Props>();
 
-interface ButtonEmits {
+interface Emits {
   (event: "click", mouseEvent: MouseEvent): void;
 }
 
-const emit = defineEmits<ButtonEmits>();
+const emit = defineEmits<Emits>();
 
 const baseClasses = "px-4 py-2 rounded focus:outline-none";
 
@@ -44,7 +44,7 @@ const buttonClasses = computed(() => {
   );
 });
 
-const handleClick = (event: MouseEvent) => {
+function handleClick(event: MouseEvent) {
   if (!props.disabled) {
     emit("click", event);
   }

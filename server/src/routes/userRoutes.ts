@@ -11,6 +11,7 @@ import { connectToDatabase } from "../database/connection";
 import { verifyToken } from "../middlewares/authMiddleware";
 import multer from "multer";
 import path from "path";
+import { ERROR_MESSAGES } from '../constants/errorMessages.js';
 
 const UPLOAD_DIR = path.join(process.cwd(), "uploads");
 
@@ -23,13 +24,13 @@ router.get(
     try {
       const authHeader = req.headers["authorization"];
       if (!authHeader) {
-        res.status(500).json({ message: "An unexpected error occurred" });
+        res.status(500).json({ message: ERROR_MESSAGES.unexpected });
         return;
       }
 
       const userId = verifyToken(authHeader);
       if (!userId) {
-        res.status(500).json({ message: "An unexpected error occurred" });
+        res.status(500).json({ message: ERROR_MESSAGES.unexpected });
         return;
       }
 
@@ -37,29 +38,21 @@ router.get(
 
       res.status(200).json(profileResponse);
     } catch (err) {
-      if (err instanceof Error) {
-        res.status(500).json({ message: err.message });
-      } else {
-        res.status(500).json({ message: "An unexpected error occurred" });
-      }
+      next(err);
     }
   },
 );
 
-router.post("/login", async (req: Request, res: Response) => {
+router.post("/login", async (req: Request, res: Response, next) => {
   try {
     const loginResponse = await login(req.body.name, req.body.password);
     res.status(200).json(loginResponse);
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ message: err.message });
-    } else {
-      res.status(500).json({ message: "An unexpected error occurred" });
-    }
+    next(err);
   }
 });
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req, res, next) => {
   try {
     const registerResponse = await register(
       req.body.name,
@@ -69,33 +62,29 @@ router.post("/register", async (req, res) => {
     );
     res.status(201).json(registerResponse);
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ message: err.message });
-    } else {
-      res.status(500).json({ message: "An unexpected error occurred" });
-    }
+    next(err);
   }
 });
 
 router.post(
   "/file-upload",
   upload.single("profileImage"),
-  async (req, res): Promise<void> => {
+  async (req, res, next): Promise<void> => {
     if (!req.file) {
-      res.status(400).json({ message: "No file uploaded!" });
+      res.status(400).json({ message: ERROR_MESSAGES.noFileUploaded });
       return;
     }
 
     try {
       const authHeader = req.headers["authorization"];
       if (!authHeader) {
-        res.status(500).json({ message: "An unexpected error occurred" });
+        res.status(500).json({ message: ERROR_MESSAGES.unexpected });
         return;
       }
 
       const userId = verifyToken(authHeader);
       if (!userId) {
-        res.status(500).json({ message: "An unexpected error occurred" });
+        res.status(500).json({ message: ERROR_MESSAGES.unexpected });
         return;
       }
 
@@ -103,14 +92,14 @@ router.post(
       await saveProfileImageToUser(userId, imageUrl);
       res.status(200).json({ imageUrl });
     } catch (err) {
-      res.status(500).json({ message: "An unexpected error occurred" });
+      next(err);
     }
   },
 );
 
 router.use("/uploads", express.static(UPLOAD_DIR));
 
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/:id", async (req, res, next) => {
   try {
     const db: Db = await connectToDatabase();
     const userCollection = db.collection("users");
@@ -122,14 +111,10 @@ router.delete("/users/:id", async (req, res) => {
     if (result.deletedCount === 1) {
       res.status(200).json({ message: "User deleted successfully" });
     } else {
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: ERROR_MESSAGES.userNotFound });
     }
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ message: err.message });
-    } else {
-      res.status(500).json({ message: "An unexpected error occurred" });
-    }
+    next(err)
   }
 });
 

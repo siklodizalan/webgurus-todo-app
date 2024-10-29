@@ -6,32 +6,28 @@ import {
   getTodos,
   setTodoCompleted,
 } from "../services/todoService.js";
+import { ERROR_MESSAGES } from '../constants/errorMessages.js';
 
 const router = express.Router();
 
 router.use(verifyTokenMiddleware);
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
     const name = req.query.name;
     const priority = req.query.priority;
     if (typeof name !== "string") {
-      res.status(500).json({ message: "Type of name query is not string!" });
+      res.status(500).json({ message: ERROR_MESSAGES.typeOfNameQuery });
       return;
     }
     const todos = await getTodos(name, priority as string[]);
     res.status(200).json(todos);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message:
-          err instanceof Error ? err.message : "An unexpected error occurred",
-      });
+    next(err);
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   try {
     const insertedTodo = await addTodo(
       req.body.name,
@@ -40,17 +36,12 @@ router.post("/", async (req, res) => {
     );
     res.status(201).json(insertedTodo);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message:
-          err instanceof Error ? err.message : "An unexpected error occurred",
-      });
+    next(err);
   }
 });
 
 //@ts-ignore
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res, next) => {
   try {
     const updateSuccessful = await setTodoCompleted(
       req.params.id,
@@ -58,35 +49,25 @@ router.put("/:id", async (req, res) => {
     );
 
     if (!updateSuccessful) {
-      return res.status(404).json({ message: "Todo not found" });
+      return res.status(404).json({ message: ERROR_MESSAGES.todoNotFound });
     }
 
     res.status(200).json({ message: "Todo updated successfully" });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message:
-          err instanceof Error ? err.message : "An unexpected error occurred",
-      });
+    next(err);
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     const deleteSuccessful = await deleteTodo(req.params.id);
     if (deleteSuccessful) {
       res.status(200).json({ message: "Todo deleted successfully" });
     } else {
-      res.status(404).json({ message: "Todo not found" });
+      res.status(404).json({ message: ERROR_MESSAGES.todoNotFound });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message:
-          err instanceof Error ? err.message : "An unexpected error occurred",
-      });
+    next(err);
   }
 });
 
