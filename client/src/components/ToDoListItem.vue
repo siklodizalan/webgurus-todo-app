@@ -1,7 +1,7 @@
 <template>
   <li class="flex items-center justify-between p-2 border-b">
     <div class="flex items-center">
-      <Checkbox
+      <BaseCheckbox
         v-model="isChecked"
         checkboxStyle="mr-4"
         @change="handleUpdate" />
@@ -10,27 +10,23 @@
       </span>
       <div
         class="w-4 h-4 ml-2"
-        :class="{
-          'bg-red-500': props.priority === 'High',
-          'bg-yellow-500': props.priority === 'Medium',
-          'bg-green-500': priority === 'Low',
-        }"></div>
+        :class="priorityClass">
+      </div>
     </div>
-    <Button
+    <BaseButton
       type="button"
-      :disabled="false"
-      @click="handleDelete"
-      variant="text">
+      variant="text"
+      @click="handleDelete">
       Delete
-    </Button>
+    </BaseButton>
   </li>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import Button from "./Button.vue";
-import Checkbox from "./Checkbox.vue";
-import { PriorityType } from "../models/ToDo";
+import { computed, ref, watch } from "vue";
+import BaseButton from "./BaseButton.vue";
+import BaseCheckbox from "./BaseCheckbox.vue";
+import type { PriorityType } from "../models/ToDo";
 
 interface Props {
   text: string;
@@ -41,10 +37,18 @@ interface Props {
 const props = defineProps<Props>();
 
 interface ListItemEmits {
-  (event: "delete"): void;
-  (event: "update:modelValue", value: boolean): void;
+  (event: "onDelete"): void;
+  (event: "onUpdate", value: boolean): void;
 }
 const emit = defineEmits<ListItemEmits>();
+
+const classMap = {
+  High: "bg-red-500",
+  Medium: "bg-yellow-500",
+  Low: "bg-green-500",
+};
+
+const priorityClass = computed(() => classMap[props.priority!] || "");
 
 const isChecked = ref(props.completed);
 
@@ -56,10 +60,10 @@ watch(
 );
 
 const handleDelete = (): void => {
-  emit("delete");
+  emit("onDelete");
 };
 
 const handleUpdate = (): void => {
-  emit("update:modelValue", isChecked.value);
+  emit("onUpdate", isChecked.value);
 };
 </script>

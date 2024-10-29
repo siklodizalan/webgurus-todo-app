@@ -1,69 +1,52 @@
 <template>
   <div class="flex space-x-4 mb-4">
-    <Checkbox
+    <BaseCheckbox
       v-model="isAllChecked"
       label="All"
       value="All"
-      checkboxStyle="h-6 w-6 text-blue-600"
+      BaseCheckboxStyle="h-6 w-6 text-blue-600"
       labelStyle="text-lg text-white"
       @change="setAllSelected" />
-    <Checkbox
+    <BaseCheckbox
+      v-for="priority in allPriorities"
       v-model="checkedPriorities"
-      id="High"
-      label="High"
-      value="High"
-      checkboxStyle="h-6 w-6 text-blue-600"
-      labelStyle="text-lg text-white" />
-    <Checkbox
-      v-model="checkedPriorities"
-      id="Medium"
-      label="Medium"
-      value="Medium"
-      checkboxStyle="h-6 w-6 text-blue-600"
-      labelStyle="text-lg text-white" />
-    <Checkbox
-      v-model="checkedPriorities"
-      id="Low"
-      label="Low"
-      value="Low"
-      checkboxStyle="h-6 w-6 text-blue-600"
-      labelStyle="text-lg text-white" />
+      BaseCheckboxStyle="h-6 w-6 text-blue-600"
+      labelStyle="text-lg text-white"
+      :key="priority"
+      :id="priority"
+      :label="priority"
+      :value="priority"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import Checkbox from "./Checkbox.vue";
+import BaseCheckbox from "./BaseCheckbox.vue";
 
+const allPriorities = ["High", "Medium", "Low"];
 const checkedPriorities = ref<string[]>(["High", "Medium", "Low"]);
 const isAllChecked = ref<boolean>(true);
+
+interface PriorityCheckmarkEmits {
+  (e: "priorityCheck", checkedPriorities: string[]): void;
+}
+
+const emit = defineEmits<PriorityCheckmarkEmits>();
 
 function setAllSelected(event: Event) {
   const target = event.target as HTMLInputElement;
   const allSelected = target.checked;
-  console.log(allSelected);
 
-  if (allSelected) {
-    checkedPriorities.value = ["High", "Medium", "Low"];
-  } else {
-    checkedPriorities.value = [];
-  }
+  checkedPriorities.value = allSelected ? allPriorities : [];
 }
-
-watch(checkedPriorities, (newValue) => {
-  if (newValue.length === 3) {
-    isAllChecked.value = true;
-  } else {
-    isAllChecked.value = false;
-  }
-  emitCheckedPriorities();
-});
-
-const emit = defineEmits<{
-  (e: "priorityCheck", checkedPriorities: string[]): void;
-}>();
 
 function emitCheckedPriorities() {
   emit("priorityCheck", checkedPriorities.value);
 }
+
+watch(checkedPriorities, (newValue) => {
+  isAllChecked.value = newValue.length === 3;
+  emitCheckedPriorities();
+});
 </script>

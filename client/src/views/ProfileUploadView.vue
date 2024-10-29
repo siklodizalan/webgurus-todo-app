@@ -1,41 +1,40 @@
 <template>
   <div class="flex flex-col items-center p-4 bg-white shadow-md rounded-lg">
     <img
-      :src="imageUrl || placeholderImage"
       alt="Profile Picture"
-      class="w-32 h-32 rounded-full object-cover mb-4 shadow-md" />
+      class="w-32 h-32 rounded-full object-cover mb-4 shadow-md"
+      :src="imageUrl || placeholderImage" />
 
     <input
       type="file"
-      @change="onFileChange"
       accept="image/*"
-      class="block w-full text-sm text-gray-600 bg-gray-100 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 p-2" />
+      class="block w-full text-sm text-gray-600 bg-gray-100 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 p-2" 
+      @change="onFileChange" />
 
-    <Button
+    <BaseButton
       type="button"
       variant="primary"
-      @click="uploadImage"
+      BaseButtonStyle="w-full mb-2"
       :disabled="!selectedFile"
-      buttonStyle="w-full mb-2">
+      @click="uploadImage">
       Upload
-    </Button>
+    </BaseButton>
 
-    <Button
+    <BaseButton
       type="button"
-      :disabled="false"
       variant="text"
-      buttonStyle="mb-4"
+      BaseButtonStyle="mb-4"
       @click="navigateToHomePage">
       Home Page
-    </Button>
+    </BaseButton>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import UserService from "../service/UserService";
 import { useRouter } from "vue-router";
-import Button from "../components/Button.vue";
+import UserService from "../service/UserService";
+import BaseButton from "../components/BaseButton.vue";
 import { useUser } from "../composables/useUser";
 
 const { updateUser } = useUser();
@@ -46,7 +45,7 @@ const placeholderImage = "https://via.placeholder.com/150";
 
 function onFileChange(event: Event) {
   const target = event.target as HTMLInputElement;
-  const file = target.files ? target.files[0] : null;
+  const file = target.files?.[0] ?? null;
   if (file) {
     selectedFile.value = file;
     imageUrl.value = URL.createObjectURL(file);
@@ -58,10 +57,7 @@ async function uploadImage() {
     return;
   }
 
-  const newProfileImageUrl = await UserService.uploadImage(
-    selectedFile.value,
-    imageUrl.value!
-  );
+  const newProfileImageUrl = await UserService.uploadImage(selectedFile.value);
   updateUser(undefined, newProfileImageUrl);
   navigateToHomePage();
 }

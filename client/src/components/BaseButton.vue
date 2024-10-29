@@ -1,5 +1,8 @@
 <template>
-  <button :class="buttonClasses" :disabled="disabled" @click="handleClick">
+  <button 
+    :class="buttonClasses" 
+    :disabled="disabled" 
+    @click="handleClick">
     <slot></slot>
   </button>
 </template>
@@ -25,18 +28,13 @@ const emit = defineEmits<ButtonEmits>();
 
 const baseClasses = "px-4 py-2 rounded focus:outline-none";
 
-const variantClasses = computed(() => {
-  switch (props.variant) {
-    case "primary":
-      return "bg-blue-500 text-white hover:bg-blue-600";
-    case "secondary":
-      return "bg-gray-300 text-gray-800 hover:bg-gray-400";
-    case "text":
-      return "text-blue-500 hover:underline";
-    default:
-      return "";
-  }
-});
+const classMap = {
+  primary: "bg-blue-500 text-white hover:bg-blue-600",
+  secondary: "bg-gray-300 text-gray-800 hover:bg-gray-400",
+  text: "text-blue-500 hover:underline",
+};
+
+const variantClasses = computed(() => classMap[props.variant] || "");
 
 const buttonClasses = computed(() => {
   const disabledClass = props.disabled ? "opacity-50 cursor-not-allowed" : "";

@@ -1,4 +1,4 @@
-export type PriorityType = "High" | "Medium" | "Low" | null;
+export type PriorityType = "High" | "Medium" | "Low";
 
 export default interface TodoData {
   _id: string;

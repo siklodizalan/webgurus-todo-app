@@ -1,12 +1,14 @@
 <template>
   <div class="flex items-center">
     <input
-      :class="checkboxClasses"
-      type="checkbox"
       v-model="isChecked"
+      type="checkbox"
+      :class="checkboxClasses"
       :value="value"
       :id="id" />
-    <label v-if="label" :class="labelClasses">
+    <label 
+      v-if="label" 
+      :class="labelClasses">
       {{ label }}
     </label>
   </div>

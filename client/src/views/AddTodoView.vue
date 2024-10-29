@@ -1,50 +1,50 @@
 <template>
   <h1 class="text-2xl font-bold mb-4">Add New To-Do</h1>
-  <Button
+  <BaseButton
     type="button"
-    :disabled="false"
     variant="text"
-    buttonStyle="mb-4"
+    BaseButtonStyle="mb-4"
     @click="navigateToHomePage">
     Back to Search
-  </Button>
+  </BaseButton>
   <div class="flex flex-col mb-4">
     <h3 class="text-l font-bold mb-4">Enter the to-do name</h3>
-    <Input
+    <BaseInput
+    v-model="newTodo"
       type="text"
-      v-model="newTodo"
       placeholder="To-do name"
-      @enter="addTodo"
-      inputStyle="mb-4" />
+      inputStyle="mb-4" 
+      @enter="addTodo"/>
     <h3 class="text-l font-bold mb-4">Select the priority</h3>
     <select class="mb-4" v-model="selectedPriority">
       <option>High</option>
       <option>Medium</option>
       <option>Low</option>
     </select>
-    <Button
+    <BaseButton
       type="button"
-      :disabled="isAddButtonDisabled"
       variant="primary"
+      :disabled="isAddBaseButtonDisabled"
       @click="addTodo">
       Add
-    </Button>
+    </BaseButton>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import Button from "../components/Button.vue";
-import Input from "../components//Input.vue";
+import { useRouter } from "vue-router";
+import BaseButton from "../components/BaseButton.vue";
+import BaseInput from "../components/BaseInput.vue";
 import TodoService from "../service/TodoService";
 import Todo, { PriorityType } from "../models/ToDo";
-import { useRouter } from "vue-router";
 
 const todos = ref<Todo[]>([]);
 const newTodo = ref<string>("");
-const selectedPriority = ref<PriorityType>(null);
+const selectedPriority = ref<PriorityType>();
+const router = useRouter();
 
-const isAddButtonDisabled = computed(() => {
+const isAddBaseButtonDisabled = computed(() => {
   return !newTodo.value.trim() || !selectedPriority.value;
 });
 
@@ -53,7 +53,7 @@ const addTodo = async () => {
     try {
       const addedTodo = await TodoService.addTodo(
         newTodo.value.trim(),
-        selectedPriority.value
+        selectedPriority.value!
       );
       todos.value.push(addedTodo);
       newTodo.value = "";
@@ -63,8 +63,6 @@ const addTodo = async () => {
     }
   }
 };
-
-const router = useRouter();
 
 function navigateToHomePage() {
   router.push("/");

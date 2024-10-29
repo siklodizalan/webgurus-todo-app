@@ -2,7 +2,7 @@
   <h2 class="text-2xl font-bold text-center mb-8">Register</h2>
   <form @submit.prevent="submitForm" class="space-y-6 mb-8">
     <!-- Username Field -->
-    <Input
+    <BaseInput
       v-model="form.username"
       id="username"
       label="Username"
@@ -12,7 +12,7 @@
     </p>
 
     <!-- Email Field -->
-    <Input
+    <BaseInput
       v-model="form.email"
       id="email"
       label="Email"
@@ -23,7 +23,7 @@
     </p>
 
     <!-- Password Field -->
-    <Input
+    <BaseInput
       v-model="form.password"
       id="password"
       label="Password"
@@ -34,7 +34,7 @@
     </p>
 
     <!-- Confirm Password Field -->
-    <Input
+    <BaseInput
       v-model="form.confirmPassword"
       id="confirmPassword"
       label="Confirm Password"
@@ -45,23 +45,36 @@
     </p>
 
     <!-- Submit Button -->
-    <Button type="submit" variant="primary"> Register </Button>
+    <BaseButton 
+        type="submit" 
+        variant="primary"> 
+        Register 
+    </BaseButton>
+    <p v-if="errors.general" class="text-red-500 text-sm mt-1">
+      {{ errors.general }}
+    </p>
   </form>
-  <Button type="button" variant="text" @click="navigateToLogin">
+  <BaseButton 
+    type="button" 
+    variant="text" 
+    @click="navigateToLogin">
     Already have an account? Log in.
-  </Button>
+  </BaseButton>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import Button from "../components/Button.vue";
-import Input from "../components/Input.vue";
-import { useRouter } from "vue-router";
-import UserService from "../service/UserService";
 import Cookies from "js-cookie";
+import { useRouter } from "vue-router";
+import axios from "axios";
+import BaseButton from "../components/BaseButton.vue";
+import BaseInput from "../components/BaseInput.vue";
+import UserService from "../service/UserService";
 import { useUser } from "../composables/useUser";
+import { validatePassword, validateEmail } from "../../../shared/utils/validationUtil.ts";
 
 const { updateUser } = useUser();
+const router = useRouter();
 
 const form = ref({
   username: "",
@@ -75,6 +88,7 @@ const errors = ref({
   email: "",
   password: "",
   confirmPassword: "",
+  general: "",
 });
 
 async function submitForm() {
@@ -83,38 +97,51 @@ async function submitForm() {
     email: "",
     password: "",
     confirmPassword: "",
+    general: "",
   };
 
   if (!form.value.username) {
     errors.value.username = "Username is required";
   }
-  if (!form.value.email) {
-    errors.value.email = "Email is required";
-  } else if (!validateEmail(form.value.email)) {
-    errors.value.email = "Invalid email format";
+
+  if (!validateEmail(form.value.email)) {
+    errors.value.email = "Invalid email format.";
   }
-  if (!form.value.password) {
-    errors.value.password = "Password is required";
-  } else if (form.value.password.length < 6) {
-    errors.value.password = "Password must be at least 6 characters long";
+
+  if (!validatePassword(form.value.password)) {
+    errors.value.password = "Password must be at least 8 characters long, include a number, a lowercase, and an uppercase letter.";
   }
+
+  if (!validatePassword(form.value.confirmPassword)) {
+    errors.value.confirmPassword = "Password must be at least 8 characters long, include a number, a lowercase, and an uppercase letter.";
+  }
+
   if (form.value.password !== form.value.confirmPassword) {
     errors.value.confirmPassword = "Passwords do not match";
   }
 
   if (!Object.values(errors.value).some((err) => err)) {
-    const registerResponse = await UserService.registerUser(
-      form.value.username,
-      form.value.email,
-      form.value.password,
-      form.value.confirmPassword
-    );
-    const user = registerResponse.userData;
+    try {
+      const registerResponse = await UserService.registerUser(
+        form.value.username,
+        form.value.email,
+        form.value.password,
+        form.value.confirmPassword
+      );
+      
+      const user = registerResponse.userData;
+      const token = registerResponse.token;
+      Cookies.set("token", token, { expires: 7 });
 
-    const token = registerResponse.token;
-    Cookies.set("token", token, { expires: 7 });
-    updateUser(user.name, user.profileImageUrl);
-    navigateToUploadProfilePicture();
+      updateUser(user.name, user.profileImageUrl);
+      navigateToUploadProfilePicture();
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        errors.value.general = err.response!.data.message;
+      } else {
+        errors.value.general = "Unexpected error: ";
+      }
+    }
   }
 }
 
@@ -122,8 +149,6 @@ function validateEmail(email: string): boolean {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email);
 }
-
-const router = useRouter();
 
 function navigateToLogin() {
   router.push("/login");

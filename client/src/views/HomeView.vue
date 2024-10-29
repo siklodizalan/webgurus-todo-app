@@ -1,29 +1,27 @@
 <template>
   <h1 class="text-2xl font-bold mb-4">Your To-Dos</h1>
-  <Button
+  <BaseButton
     type="button"
-    :disabled="false"
     variant="primary"
     buttonStyle="mb-4"
     @click="navigateToAddTodoPage">
     Add New To-Do
-  </Button>
+  </BaseButton>
   <div class="flex items-center mb-4">
     <div class="mr-4">
-      <Input
-        type="text"
+      <BaseInput
         v-model="searchTerm"
+        type="text"
         placeholder="Search for a to-do"
-        @enter="searchTodos"
-        inputStyle="mr-4" />
+        inputStyle="mr-4" 
+        @enter="searchTodos" />
     </div>
-    <Button
+    <BaseButton
       type="button"
-      :disabled="false"
-      @click="searchTodos"
-      variant="primary">
+      variant="primary"
+      @click="searchTodos">
       Search
-    </Button>
+    </BaseButton>
   </div>
 
   <PriorityCheckmarks @priorityCheck="priorityFilter" />
@@ -38,27 +36,27 @@
       :completed="todo.completed"
       :id="todo._id"
       :priority="todo.priority"
-      @update:modelValue="updateTodoStatus(todo._id, $event)"
-      @delete="removeTodo(todo._id)" />
+      @onUpdate="updateTodoStatus(todo._id, $event)"
+      @onDelete="removeTodo(todo._id)" />
   </ul>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
-import Button from "../components/Button.vue";
+import { useRouter } from "vue-router";
+import BaseButton from "../components/BaseButton.vue";
 import ListItem from "../components//ToDoListItem.vue";
-import Input from "../components//Input.vue";
+import BaseInput from "../components/BaseInput.vue";
 import TodoService from "../service/TodoService";
 import type Todo from "../models/ToDo";
 import PriorityCheckmarks from "../components/PriorityCheckmarks.vue";
-import { useRouter } from "vue-router";
-import { useUser } from "../composables/useUser";
 
 const todos = ref<Todo[]>([]);
 const searchTerm = ref<string>("");
 const localPriorities = ref<string[]>(["High", "Medium", "Low"]);
+  const router = useRouter();
 
-const fetchTodos = async () => {
+async function fetchTodos() {
   try {
     todos.value = await TodoService.fetchTodos("", localPriorities.value);
   } catch (error) {
@@ -66,7 +64,7 @@ const fetchTodos = async () => {
   }
 };
 
-const searchTodos = async () => {
+async function searchTodos() {
   try {
     todos.value = await TodoService.fetchTodos(
       searchTerm.value.trim(),
@@ -77,7 +75,7 @@ const searchTodos = async () => {
   }
 };
 
-const priorityFilter = async (checkedPriorities: string[]) => {
+async function priorityFilter(checkedPriorities: string[]) {
   try {
     localPriorities.value = checkedPriorities;
     todos.value = await TodoService.fetchTodos(
@@ -89,7 +87,7 @@ const priorityFilter = async (checkedPriorities: string[]) => {
   }
 };
 
-const updateTodoStatus = async (id: string, completed: boolean) => {
+async function updateTodoStatus(id: string, completed: boolean) {
   try {
     await TodoService.updateTodo(id, completed);
   } catch (error) {
@@ -97,7 +95,7 @@ const updateTodoStatus = async (id: string, completed: boolean) => {
   }
 };
 
-const removeTodo = async (id: string) => {
+async function removeTodo(id: string) {
   try {
     await TodoService.deleteTodo(id);
     todos.value = todos.value.filter((todo) => todo._id !== id);
@@ -112,10 +110,7 @@ watch(searchTerm, () => {
 
 onMounted(() => {
   fetchTodos();
-  console.log(useUser());
 });
-
-const router = useRouter();
 
 function navigateToAddTodoPage() {
   router.push("/add");

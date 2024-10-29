@@ -2,6 +2,10 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import router from "./router/router";
 
+const API_URL = "http://localhost:3000";
+
+axios.defaults.baseURL = API_URL;
+
 axios.interceptors.request.use(
   (config) => {
     const token = Cookies.get("token");
@@ -13,7 +17,7 @@ axios.interceptors.request.use(
     return config;
   },
   (error) => {
-    return Promise.reject(error);
+    throw error;
   }
 );
 
@@ -26,7 +30,7 @@ axios.interceptors.response.use(
         router.push("/login");
       }
     }
-    return Promise.reject(error);
+    throw error;
   }
 );
 

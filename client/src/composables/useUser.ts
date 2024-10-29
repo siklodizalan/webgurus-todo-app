@@ -1,8 +1,7 @@
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import Cookies from "js-cookie";
+import { useRouter } from "vue-router";
 import UserService from "../service/UserService";
-
-const API_URL = "http://localhost:3000";
 
 const user = ref({
   name: null as string | null,
@@ -10,11 +9,12 @@ const user = ref({
 });
 
 export function useUser() {
+  const router = useRouter();
   function logoutUser() {
     user.value.name = null;
     user.value.profileImageUrl = null;
     Cookies.remove("token");
-    window.location.href = "/login";
+    router.push("/login");
   }
 
   function updateUser(newUsername?: string, newProfileImageUrl?: string) {

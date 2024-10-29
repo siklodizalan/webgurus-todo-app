@@ -4,11 +4,11 @@ export type User = {
   email: string;
   password: string;
   profileImageUrl: string;
-}
+};
 
-export type UserWithoutPassword =  Omit<User, "password">
+export type UserWithoutPassword = Omit<User, "password">;
 
 export type LoginResponse = {
-  userData: UserWithoutPassword,
-  token: string
-}
+  userData: UserWithoutPassword;
+  token: string;
+};

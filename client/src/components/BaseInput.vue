@@ -1,26 +1,28 @@
 <template>
   <div class="relative" v-bind="$attrs">
     <input
-      :type="inputType"
-      :placeholder
-      :class="inputClasses"
-      v-model="model"
-      @keyup.enter="$emit('enter')" />
-    <button
+        v-model="model"
+        :type="inputType"
+        :placeholder
+        :class="inputClasses"
+        @keyup.enter="$emit('enter')" />
+    <BaseButton
       v-if="isPassword"
       type="button"
-      @click="togglePasswordVisibility"
+      variant="primary"
       class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer"
-      aria-label="Toggle password visibility">
+      aria-label="Toggle password visibility"
+      @click="togglePasswordVisibility">
       <span v-if="isPasswordVisible">👁️</span>
       <span v-else>👁️‍🗨️</span>
-    </button>
+    </BaseButton>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { cn } from "../utils/ClassNameUtil.ts";
+import BaseButton from "./BaseButton.vue";
 
 interface InputProps {
   modelValue: string | number | boolean;
@@ -31,7 +33,13 @@ interface InputProps {
   labelStyle?: string;
 }
 
+interface InputEmits {
+    (e: "enter"): void;
+}
+
 const props = defineProps<InputProps>();
+
+defineEmits<InputEmits>();
 
 const model = defineModel();
 
@@ -48,8 +56,4 @@ const inputClasses = computed(() =>
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
 }
-
-defineEmits<{
-  (e: "enter"): void;
-}>();
 </script>
