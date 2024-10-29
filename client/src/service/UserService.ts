@@ -1,4 +1,4 @@
-import client from "../axios";
+import { client } from "../axiosClient.js";
 import type { LoginResponse } from "../models/User";
 
 const userService = {
