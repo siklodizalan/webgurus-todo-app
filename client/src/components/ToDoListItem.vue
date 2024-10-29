@@ -9,8 +9,7 @@
         {{ text }}
       </span>
       <div
-        class="w-4 h-4 ml-2"
-        :class="priorityClass">
+        :class="cn('w-4 h-4 ml-2', priorityClass)">
       </div>
     </div>
     <BaseButton
@@ -27,6 +26,7 @@ import { computed, ref, watch } from "vue";
 import BaseButton from "./BaseButton.vue";
 import BaseCheckbox from "./BaseCheckbox.vue";
 import type { PriorityType } from "../models/ToDo";
+import { cn } from "../utils/ClassNameUtil.ts";
 
 const classMap = {
   High: "bg-red-500",
