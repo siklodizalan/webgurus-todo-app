@@ -1,0 +1,43 @@
+<template>
+  <div class="flex items-center">
+    <input
+      v-model="isChecked"
+      type="checkbox"
+      :class="checkboxClasses"
+      :value="value"
+      :id="id" />
+    <label 
+      v-if="label" 
+      :class="labelClasses">
+      {{ label }}
+    </label>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import { cn } from "../utils/ClassNameUtil.ts";
+
+interface Props {
+  label?: string;
+  checkboxStyle?: string;
+  labelStyle?: string;
+  value?: string;
+  id?: string;
+}
+
+const props = defineProps<Props>();
+
+const isChecked = defineModel();
+
+const checkboxClasses = computed(() => {
+  return cn(
+    "form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out",
+    props.checkboxStyle
+  );
+});
+
+const labelClasses = computed(() => {
+  return cn("ml-2 text-lg font-medium text-white", props.labelStyle);
+});
+</script>

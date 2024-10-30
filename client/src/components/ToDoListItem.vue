@@ -1,65 +1,69 @@
 <template>
   <li class="flex items-center justify-between p-2 border-b">
     <div class="flex items-center">
-      <Checkbox
-        v-model="isChecked" 
+      <BaseCheckbox
+        v-model="isChecked"
         checkboxStyle="mr-4"
-        @change="handleUpdate"
-      />
+        @change="handleUpdate" />
       <span :class="{ 'line-through text-gray-500': isChecked }">
         {{ text }}
       </span>
-      <div 
-        class="w-4 h-4 ml-2" 
-        :class="{
-          'bg-red-500': props.priority === 'High',
-          'bg-yellow-500': props.priority === 'Medium',
-          'bg-green-500': priority === 'Low'
-        }">
+      <div
+        :class="cn('w-4 h-4 ml-2', priorityClass)">
       </div>
     </div>
-    <Button 
+    <BaseButton
       type="button"
-      :disabled="false"
-      @click="handleDelete" 
       variant="text"
-      >
-        Delete
-    </Button>
+      @click="handleDelete">
+      Delete
+    </BaseButton>
   </li>
 </template>
 
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
-  import Button from './Button.vue';
-  import Checkbox from './Checkbox.vue';
-import { PriorityType } from '../models/ToDo';
+import { computed, ref, watch } from "vue";
+import BaseButton from "./BaseButton.vue";
+import BaseCheckbox from "./BaseCheckbox.vue";
+import type { PriorityType } from "../models/ToDo";
+import { cn } from "../utils/ClassNameUtil.ts";
 
-  interface Props {
-    text: string;
-    completed: boolean;
-    priority: PriorityType;
-    id: string;
-  }
-  const props = defineProps<Props>();
+const classMap = {
+  High: "bg-red-500",
+  Medium: "bg-yellow-500",
+  Low: "bg-green-500",
+};
 
-  interface ListItemEmits {
-    (event: 'delete'): void;
-    (event: 'update:modelValue', value: boolean): void;
-  }
-  const emit = defineEmits<ListItemEmits>();
+const priorityClass = computed(() => classMap[props.priority!] || "");
 
-  const isChecked = ref(props.completed);
+interface Props {
+  text: string;
+  completed: boolean;
+  priority: PriorityType;
+  id: string;
+}
+const props = defineProps<Props>();
 
-  watch(() => props.completed, (newValue) => {
+const isChecked = ref(props.completed);
+
+interface Emits {
+  (event: "onDelete"): void;
+  (event: "onUpdate", value: boolean): void;
+}
+const emit = defineEmits<Emits>();
+
+watch(
+  () => props.completed,
+  (newValue) => {
     isChecked.value = newValue;
-  });
+  }
+);
 
-  const handleDelete = (): void => {
-    emit('delete');
-  };
+function handleDelete(): void {
+  emit("onDelete");
+};
 
-  const handleUpdate = (): void => {
-    emit('update:modelValue', isChecked.value);
-  };
+function handleUpdate(): void {
+  emit("onUpdate", isChecked.value);
+};
 </script>
