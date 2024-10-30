@@ -3,6 +3,8 @@ import type {
   LoginResponse,
   LoginRequest,
   RegisterRequest,
+  UserData,
+  Role,
 } from "../models/User";
 
 const userService = {
@@ -13,6 +15,16 @@ const userService = {
     } catch (error) {
       console.error("Error fetching user:", error);
       throw error;
+    }
+  },
+
+  async fetchAllUsers() {
+    try {
+      const response = await client.get<UserData[]>("/users");
+      return response.data;
+    } catch(err) {
+      console.error("Error fetching users: ", err);
+      throw err;   
     }
   },
 
@@ -37,6 +49,7 @@ const userService = {
     confirmPassword: string
   ): Promise<LoginResponse> {
     try {
+      const role = "USER";
       const response = await client.post<RegisterRequest, LoginResponse>(
         "/register",
         {
@@ -44,6 +57,7 @@ const userService = {
           email,
           password,
           confirmPassword,
+          role,
         }
       );
       return response.data;
@@ -53,11 +67,31 @@ const userService = {
     }
   },
 
-  async deleteUser(): Promise<void> {
+  async deleteOwnAccount(): Promise<void> {
     try {
       await client.delete("/user");
     } catch (error) {
       console.error("Error deleting user:", error);
+      throw error;
+    }
+  },
+
+  async deleteUser(id: string): Promise<void> {
+    try {
+      await client.delete(`/users/${id}`);
+    } catch (error) {
+      console.error("Error deleting user: ", error);
+      throw error;
+    }
+  },
+
+  async updateUserRole(userId: string, newRole: Role) {
+    try {
+      console.log("userId: ", userId);
+      console.log("newRole: ", newRole);
+      await client.put(`/users/role`, { userId, newRole });
+    } catch (error) {
+      console.error("Error updating user: ", error);
       throw error;
     }
   },

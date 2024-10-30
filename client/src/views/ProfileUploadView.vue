@@ -33,7 +33,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import UserService from "../service/UserService";
+import UserService from "../services/UserService";
 import BaseButton from "../components/BaseButton.vue";
 import { useUser } from "../composables/useUser";
 

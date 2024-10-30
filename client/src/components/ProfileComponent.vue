@@ -21,6 +21,14 @@
         Upload Profile Picture
       </BaseButton>
       <BaseButton
+        v-if="isAdmin"
+        type="button"
+        variant="text"
+        buttonStyle="w-full text-left text-sm"
+        @click="getToAdminDashboard">
+        Admin Dashboard
+      </BaseButton>
+      <BaseButton
         type="button"
         variant="text"
         buttonStyle="w-full text-left text-sm text-gray-700"
@@ -39,10 +47,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import BaseButton from "./BaseButton.vue";
 import { useUser } from "../composables/useUser";
+import { Role } from "../models/User";
 
 const isDropdownOpen = ref(false);
 const router = useRouter();
@@ -51,9 +60,12 @@ const { logoutUser, deleteUser } = useUser();
 interface Props {
   username: string;
   profileImageUrl: string;
+  userRole: Role;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const isAdmin = computed(() => props.userRole === "ADMIN");
 
 function toggleDropdown() {
   isDropdownOpen.value = !isDropdownOpen.value;
@@ -65,5 +77,9 @@ function closeDropdown() {
 
 function getToUploadProfilePicture() {
   router.push("/upload");
+}
+
+function getToAdminDashboard() {
+  router.push("/dashboard");
 }
 </script>

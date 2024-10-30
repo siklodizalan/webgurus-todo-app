@@ -3,7 +3,10 @@ export interface UserData {
   name: string;
   email: string;
   profileImageUrl: string;
+  role: Role;
 }
+
+export type Role = "USER" | "ADMIN" | "VISITOR";
 
 export interface LoginRequest {
   name: String;
@@ -20,4 +23,10 @@ export interface RegisterRequest {
   email: string,
   password: string,
   confirmPassword: string,
+  role: Role,
+}
+
+export interface RoleChangeRequest {
+  userId: string,
+  newRole: Role,
 }

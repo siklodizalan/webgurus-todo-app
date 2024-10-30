@@ -47,7 +47,7 @@ import { useRouter } from "vue-router";
 import BaseButton from "../components/BaseButton.vue";
 import ListItem from "../components//ToDoListItem.vue";
 import BaseInput from "../components/BaseInput.vue";
-import TodoService from "../service/TodoService";
+import TodoService from "../services/TodoService";
 import type Todo from "../models/ToDo";
 import PriorityCheckmarks from "../components/PriorityCheckmarks.vue";
 

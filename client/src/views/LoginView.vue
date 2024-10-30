@@ -47,7 +47,7 @@ import Cookies from "js-cookie";
 import axios, { AxiosError } from "axios";
 import BaseButton from "../components/BaseButton.vue";
 import BaseInput from "../components/BaseInput.vue";
-import UserService from "../service/UserService";
+import UserService from "../services/UserService";
 import { useUser } from "../composables/useUser";
 import { validatePassword } from "../../../shared/utils/validationUtil.ts";
 
@@ -87,11 +87,13 @@ async function submitForm() {
         form.value.password
       );
 
+      //updateLoginTimestamp();
+
       const user = loginResponse.userData;
       const token = loginResponse.token;
       Cookies.set("token", token, { expires: 7 });
       
-      updateUser(user.name, user.profileImageUrl);
+      updateUser(user);
       navigateToHomePage();
     } catch (err) {
       if (axios.isAxiosError(err)) {

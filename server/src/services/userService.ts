@@ -7,6 +7,7 @@ import { LoginResponse, User } from "../database/models/User.js";
 import { PORT } from "../index.js";
 import path from "path";
 import fs from "fs/promises";
+import type { Role } from "../database/models/User.js";
 
 export async function uniqueUser(username: string, email: string) {
   const db: Db = await connectToDatabase();
@@ -19,6 +20,14 @@ export async function uniqueUser(username: string, email: string) {
     throw new Error("An account with this username or email already exists.");
   }
   return true;
+}
+
+export async function getAllUsers() {
+  const db: Db = await connectToDatabase();
+  const usersCollection = db.collection("users");
+  
+  const users = await usersCollection.find({}).toArray();
+  return users;
 }
 
 export async function profile(userId: string) {
@@ -37,6 +46,7 @@ export async function profile(userId: string) {
       name: user.name,
       email: user.email,
       profileImageUrl: `http://localhost:${PORT}${user.profileImageUrl}`,
+      role: user.role,
     },
     token,
   };
@@ -73,6 +83,7 @@ export async function login(name: string, password: string) {
       name: user.name,
       email: user.email,
       profileImageUrl: `http://localhost:${PORT}${user.profileImageUrl}`,
+      role: user.role,
     },
     token,
   };
@@ -84,6 +95,7 @@ export async function register(
   email: string,
   password: string,
   confirmPassword: string,
+  role: Role,
 ) {
   const db: Db = await connectToDatabase();
   const userCollection = db.collection("users");
@@ -98,7 +110,7 @@ export async function register(
   validateUser(email, password);
   password = hash;
 
-  const newUser = { name, email, password };
+  const newUser = { name, email, password, role };
 
   const result = await userCollection.insertOne(newUser);
   const insertedUserPayload = await userCollection
@@ -120,6 +132,7 @@ export async function register(
       name: insertedUser.name,
       email: insertedUser.email,
       profileImageUrl: "",
+      role: insertedUser.role,
     },
     token,
   };
@@ -149,4 +162,18 @@ export async function deleteUser(userId: string) {
   });
 
   return result.deletedCount === 1;
+}
+
+export async function setUserRole(userId: string, newRole: Role) {
+  console.log("userId: ", userId);
+  console.log("newRole: ", newRole);
+  const db: Db = await connectToDatabase();
+  const userCollection = db.collection("users");
+
+  const result = await userCollection.updateOne(
+    { _id: new ObjectId(userId) },
+    { $set: { role: newRole } }
+  );
+
+  return result.modifiedCount !== 0;
 }

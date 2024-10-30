@@ -36,7 +36,7 @@ import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import BaseButton from "../components/BaseButton.vue";
 import BaseInput from "../components/BaseInput.vue";
-import TodoService from "../service/TodoService";
+import TodoService from "../services/TodoService";
 import Todo, { PriorityType } from "../models/ToDo";
 
 const todos = ref<Todo[]>([]);

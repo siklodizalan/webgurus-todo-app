@@ -5,6 +5,7 @@ import RegisterPage from "../views/RegisterView.vue";
 import LoginPage from "../views/LoginView.vue";
 import AddTodoPage from "../views/AddTodoView.vue";
 import ProfileUploadPage from "../views/ProfileUploadView.vue";
+import UserListView from "../views/UserListView.vue";
 
 const routes = [
   { path: "/", component: HomePage, meta: { requiresAuth: true } },
@@ -16,6 +17,7 @@ const routes = [
     component: ProfileUploadPage,
     meta: { requiresAuth: true },
   },
+  { path: "/dashboard", component: UserListView, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({

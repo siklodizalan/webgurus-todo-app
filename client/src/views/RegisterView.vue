@@ -69,7 +69,7 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 import BaseButton from "../components/BaseButton.vue";
 import BaseInput from "../components/BaseInput.vue";
-import UserService from "../service/UserService";
+import UserService from "../services/UserService";
 import { useUser } from "../composables/useUser";
 import { validatePassword, validateEmail } from "../../../shared/utils/validationUtil.ts";
 
@@ -133,7 +133,7 @@ async function submitForm() {
       const token = registerResponse.token;
       Cookies.set("token", token, { expires: 7 });
 
-      updateUser(user.name, user.profileImageUrl);
+      updateUser(user);
       navigateToUploadProfilePicture();
     } catch (err) {
       if (axios.isAxiosError(err)) {

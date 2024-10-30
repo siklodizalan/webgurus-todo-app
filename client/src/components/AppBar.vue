@@ -11,6 +11,7 @@
         <ProfileComponent
           v-if="user.name"
           :username="user.name"
+          :userRole="user.role"
           :profileImageUrl="user.profileImageUrl || placeholderImage" />
       </div>
     </div>

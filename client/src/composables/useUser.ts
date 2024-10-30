@@ -1,10 +1,12 @@
 import { ref } from "vue";
 import Cookies from "js-cookie";
 import { useRouter } from "vue-router";
-import UserService from "../service/UserService";
+import UserService from "../services/UserService";
+import { Role, UserData } from "../models/User";
 
 const user = ref({
   name: null as string | null,
+  role: "VISITOR" as Role,
   profileImageUrl: null as string | null,
 });
 
@@ -13,18 +15,17 @@ export function useUser() {
 
   function logoutUser() {
     user.value.name = null;
+    user.value.role = "VISITOR";
     user.value.profileImageUrl = null;
     Cookies.remove("token");
     router.push("/login");
   }
 
-  function updateUser(newUsername?: string, newProfileImageUrl?: string) {
-    if (newUsername !== undefined) {
-      user.value.name = newUsername;
-    }
-
-    if (newProfileImageUrl !== undefined) {
-      user.value.profileImageUrl = newProfileImageUrl;
+  function updateUser(newUser: UserData) {
+    if (user !== undefined) {
+      user.value.name = newUser.name;
+      user.value.role = newUser.role;
+      user.value.profileImageUrl = newUser.profileImageUrl;
     }
   }
 
@@ -32,11 +33,12 @@ export function useUser() {
     const profileResponse = await UserService.getUserData();
     const userData = profileResponse.userData;
     user.value.name = userData.name;
+    user.value.role = userData.role;
     user.value.profileImageUrl = userData.profileImageUrl;
   }
 
   async function deleteUser() {
-    await UserService.deleteUser();
+    await UserService.deleteOwnAccount();
     logoutUser();
   }
 
