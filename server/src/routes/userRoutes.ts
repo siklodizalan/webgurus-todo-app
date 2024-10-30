@@ -151,8 +151,6 @@ router.delete("/users/:id", checkAdmin, async (req, res, next) => {
 router.put("/users/role", checkAdmin, async (req, res, next) => {
   try {
     const { userId, newRole} = req.body;
-    console.log("userId: ", userId);
-    console.log("newRole: ", newRole);
 
     const updateSuccessful = await setUserRole(userId, newRole);
     if (updateSuccessful) {

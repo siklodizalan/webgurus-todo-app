@@ -39,10 +39,16 @@ export const verifyTokenMiddleware = (
 
 export const checkAdmin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const userId = res.locals.userId;
+    const authHeader = req.headers["authorization"];
+    if (!authHeader) {
+      return next(
+          res.status(401).json({ message: ERROR_MESSAGES.failedTokenAuthentication }),
+      );
+    }
+    res.locals.userId = verifyToken(authHeader);
     const db: Db = await connectToDatabase();
     const userCollection = db.collection("users");
-    const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+    const user = await userCollection.findOne({ _id: new ObjectId(res.locals.userId) });
 
     if (!user) {
       res.status(404).json({ message: ERROR_MESSAGES.userNotFound });

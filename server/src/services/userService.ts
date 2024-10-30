@@ -165,8 +165,6 @@ export async function deleteUser(userId: string) {
 }
 
 export async function setUserRole(userId: string, newRole: Role) {
-  console.log("userId: ", userId);
-  console.log("newRole: ", newRole);
   const db: Db = await connectToDatabase();
   const userCollection = db.collection("users");
 

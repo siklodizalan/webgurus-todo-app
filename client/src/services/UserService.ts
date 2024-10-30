@@ -87,8 +87,6 @@ const userService = {
 
   async updateUserRole(userId: string, newRole: Role) {
     try {
-      console.log("userId: ", userId);
-      console.log("newRole: ", newRole);
       await client.put(`/users/role`, { userId, newRole });
     } catch (error) {
       console.error("Error updating user: ", error);
